@@ -44,7 +44,7 @@ scalacOptions ++= Seq(
   //"-Ywarn-value-discard"
 )
   
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
 libraryDependencies ++= Seq(
   "org.scala-lang"                  %     "scala-reflect"         % scalaVersion.value,
