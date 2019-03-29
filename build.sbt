@@ -15,7 +15,7 @@ SbtPgp.autoImport.useGpg := true
 
 SbtPgp.autoImport.useGpgAgent := true
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8", "-Xmax-classfile-name", "254")
+scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 
 fullClasspath in console in Compile ++= (fullClasspath in Test).value // because that's where "PluginRunner" is
 
