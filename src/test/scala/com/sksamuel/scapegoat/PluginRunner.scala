@@ -12,11 +12,6 @@ import scala.tools.nsc.reporters.ConsoleReporter
  */
 trait PluginRunner {
 
-  val scalaVersion = util.Properties.versionNumberString
-  val shortScalaVersion = scalaVersion.split('.').dropRight(1).mkString(".")
-
-  val classPath = getScalaJars.map(_.getAbsolutePath) :+ sbtCompileDir.getAbsolutePath
-
   val settings = {
     val s = new scala.tools.nsc.Settings
     for (dummy <- Option(System.getProperty("printphases"))) {
@@ -25,7 +20,7 @@ trait PluginRunner {
       s.Yposdebug.value = true
     }
     s.stopAfter.value = List("refchecks") // no need to go all the way to generating classfiles
-    s.classpath.value = classPath.mkString(File.pathSeparator)
+    s.usejavacp.value = true
     s.feature.value = true
     s
   }
@@ -41,10 +36,6 @@ trait PluginRunner {
     file
   }
 
-  def addToClassPath(groupId: String, artifactId: String, version: String): Unit = {
-    settings.classpath.value = settings.classpath.value + ":" + findIvyJar(groupId, artifactId, version).getAbsolutePath
-  }
-
   def compileCodeSnippet(code: String): ScapegoatCompiler = compileSourceFiles(writeCodeSnippetToTempFile(code))
   def compileSourceResources(urls: URL*): ScapegoatCompiler = {
     compileSourceFiles(urls.map(_.getFile).map(new File(_)): _*)
@@ -54,30 +45,6 @@ trait PluginRunner {
     val command = new scala.tools.nsc.CompilerCommand(files.map(_.getAbsolutePath).toList, settings)
     new compiler.Run().compile(command.files)
     compiler
-  }
-
-  def getScalaJars: List[File] = {
-    val scalaJars = List("scala-compiler", "scala-library", "scala-reflect")
-    scalaJars.map(findScalaJar)
-  }
-
-  def findScalaJar(artifactId: String): File = findIvyJar("org.scala-lang", artifactId, scalaVersion)
-
-  def findIvyJar(groupId: String, artifactId: String, version: String): File = {
-    val userHome = System.getProperty("user.home")
-    val sbtHome = userHome + "/.ivy2"
-    val jarPath = sbtHome + "/cache/" + groupId + "/" + artifactId + "/jars/" + artifactId + "-" + version + ".jar"
-    val file = new File(jarPath)
-    if (file.exists) {
-      // println(s"Located ivy jar [$file]")
-      file
-    } else throw new FileNotFoundException(s"Could not locate [$jarPath].")
-  }
-
-  def sbtCompileDir: File = {
-    val dir = new File("./target/scala-" + shortScalaVersion + "/classes")
-    if (dir.exists) dir
-    else throw new FileNotFoundException(s"Could not locate SBT compile directory for plugin files [$dir]")
   }
 }
 

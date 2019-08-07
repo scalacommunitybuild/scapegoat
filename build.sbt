@@ -107,6 +107,8 @@ publishArtifact in Test := false
 
 parallelExecution in Test := false
 
+fork in Test := true
+
 pomIncludeRepository := {
   _ => false
 }
