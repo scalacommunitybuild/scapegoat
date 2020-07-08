@@ -153,4 +153,3 @@ scalafmtOnCompile in ThisBuild :=
   sys.env
     .get("GITHUB_ACTIONS")
     .forall(_.toLowerCase == "false")
->>>>>>> origin/master
