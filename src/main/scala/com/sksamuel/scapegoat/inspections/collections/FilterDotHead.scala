@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.collections
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class FilterDotHead
     extends Inspection(
       text = "filter().head can throw an exception",

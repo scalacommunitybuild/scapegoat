@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.imports
 import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class WildcardImport
     extends Inspection(
       text = "Wildcard imports",

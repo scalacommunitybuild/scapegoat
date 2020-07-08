@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.collections
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class ListSize
     extends Inspection(
       text = "List.size is O(n)",

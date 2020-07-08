@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.unneccesary
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class UnnecessaryIf
     extends Inspection(
       text = "Unnecessary if condition.",

@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.string
 import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class ArraysInFormat
     extends Inspection(
       text = "Array passed to String.format",

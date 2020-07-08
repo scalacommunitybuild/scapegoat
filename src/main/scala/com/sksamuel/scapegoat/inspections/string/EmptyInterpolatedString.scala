@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.string
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class EmptyInterpolatedString
     extends Inspection(
       text = "Empty interpolated string",

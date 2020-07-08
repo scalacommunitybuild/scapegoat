@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.empty
 import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class EmptyFor
     extends Inspection(
       text = "Empty for loop",

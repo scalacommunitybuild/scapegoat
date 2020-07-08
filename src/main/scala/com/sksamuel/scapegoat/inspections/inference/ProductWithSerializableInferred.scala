@@ -5,8 +5,7 @@ import scala.reflect.internal.Flags
 import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class ProductWithSerializableInferred
     extends Inspection(
       text = "Product with Serializable inferred",

@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.collections
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class FilterOptionAndGet
     extends Inspection(
       text = "filter(_.isDefined).map(_.get) instead of flatten",

@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.style
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class ParameterlessMethodReturnsUnit
     extends Inspection(
       text = "Parameterless methods returns unit",

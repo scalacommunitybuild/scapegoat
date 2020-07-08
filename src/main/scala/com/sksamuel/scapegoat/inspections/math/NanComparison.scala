@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.math
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel
- */
+ * @author Stephen Samuel */
 class NanComparison
     extends Inspection(
       text = "Nan comparison",

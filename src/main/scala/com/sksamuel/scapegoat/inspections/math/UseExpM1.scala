@@ -3,8 +3,7 @@ package com.sksamuel.scapegoat.inspections.math
 import com.sksamuel.scapegoat._
 
 /**
- * @author Matic Potočnik
- */
+ * @author Matic Potočnik */
 class UseExpM1
     extends Inspection(
       text = "Use expm1",
