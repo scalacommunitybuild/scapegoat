@@ -1,9 +1,7 @@
 package com.sksamuel.scapegoat.inspections.string
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class LooksLikeInterpolatedStringTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class LooksLikeInterpolatedStringTest extends InspectionTest {
 
   override val inspections = Seq(new LooksLikeInterpolatedString)
 

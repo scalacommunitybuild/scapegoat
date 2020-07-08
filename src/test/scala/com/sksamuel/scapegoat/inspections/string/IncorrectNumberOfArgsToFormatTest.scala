@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.string
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class IncorrectNumberOfArgsToFormatTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class IncorrectNumberOfArgsToFormatTest extends InspectionTest {
 
   override val inspections = Seq(new IncorrectNumberOfArgsToFormat)
 
@@ -40,6 +39,11 @@ class IncorrectNumberOfArgsToFormatTest extends FreeSpec with Matchers with Plug
 
         val code3 = """object Test {    "%%%%s".format()  } """
         compileCodeSnippet(code3)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+      "for correct number of args when %n is used" in {
+        val code1 = """object Test {    "Hello %s%n".format("World")  }  """
+        compileCodeSnippet(code1)
         compiler.scapegoat.feedback.warnings.size shouldBe 0
       }
     }

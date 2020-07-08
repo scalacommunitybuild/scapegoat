@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.unsafe.AsInstanceOf
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
 
-class AsInstanceOfTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class AsInstanceOfTest extends InspectionTest {
 
   override val inspections = Seq(new AsInstanceOf)
 
@@ -61,9 +60,6 @@ class AsInstanceOfTest extends FreeSpec with Matchers with PluginRunner with One
 
       compileCodeSnippet(code)
       compiler.scapegoat.feedback.warnings.size shouldBe 0
-
-      val mf = manifest[Class[_]]
-
     }
     "should not warn on manifest of class" in {
       val code = """object Test {

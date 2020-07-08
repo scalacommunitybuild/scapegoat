@@ -1,15 +1,9 @@
 package com.sksamuel.scapegoat.inspections.matching
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ OneInstancePerTest, FreeSpec, Matchers }
-
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class PartialFunctionInsteadOfMatchTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class PartialFunctionInsteadOfMatchTest extends InspectionTest {
 
   override val inspections = Seq(new PartialFunctionInsteadOfMatch)
 

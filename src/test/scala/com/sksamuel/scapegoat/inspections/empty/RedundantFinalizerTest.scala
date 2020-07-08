@@ -1,11 +1,10 @@
 package com.sksamuel.scapegoat.inspections.empty
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.unneccesary.RedundantFinalizer
-import org.scalatest.{ FreeSpec, Matchers }
 
 /** @author Stephen Samuel */
-class RedundantFinalizerTest extends FreeSpec with Matchers with PluginRunner {
+class RedundantFinalizerTest extends InspectionTest {
 
   override val inspections = Seq(new RedundantFinalizer)
 

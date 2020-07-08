@@ -1,14 +1,9 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.unneccesary.VarCouldBeVal
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
 
-class VarCouldBeValTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class VarCouldBeValTest extends InspectionTest {
 
   override val inspections = Seq(new VarCouldBeVal)
 
@@ -61,13 +56,16 @@ class VarCouldBeValTest
             |}""".stripMargin
 
         compileCodeSnippet(code)
-        compiler.scapegoat.feedback.warnings.size shouldBe 2
         val warningsInOrder = compiler.scapegoat.feedback.warnings.sortBy(_.line)
-        val Seq(barWarning, bazWarning) = warningsInOrder
-        barWarning.line shouldBe 3
-        barWarning.snippet should contain("bar is never written to, so could be a val: var bar: Int = 1")
-        bazWarning.line shouldBe 5
-        bazWarning.snippet should contain("baz is never written to, so could be a val: var baz: Int = 3")
+
+        warningsInOrder.size shouldBe 2
+        warningsInOrder match {
+          case Seq(barWarning, bazWarning) =>
+            barWarning.line shouldBe 3
+            barWarning.snippet.exists(_.contains("var bar: Int = 1")) shouldBe true
+            bazWarning.line shouldBe 5
+            bazWarning.snippet.exists(_.contains("var baz: Int = 3")) shouldBe true
+        }
       }
     }
     "should not report warning" - {
@@ -170,22 +168,43 @@ class VarCouldBeValTest
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings.size shouldBe 0
       }
+      "when var is written to inside a while condition " in {
+
+        val code =
+          """package com.sammy
+            |object Test {
+            |def something(): List[String] = List("a")
+            |def test(): Unit = {
+            |  var items = List.empty[String]
+            |  while ({
+            |   items = something()
+            |   items.size
+            |  } < 10) {
+            |    println(items)
+            |  }
+            |}
+            |}""".stripMargin
+
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
       "when var is written to for nested defs" in {
         val code =
           """
-          |package com.sam
-          |trait Iterator {
-          |  def next : Int
-          |}
-          |object Test {
-          |  val iterator = new Iterator {
-          |    var last = -1
-          |    def next: Int = {
-          |      last = last + 1
-          |      last
-          |    }
-          |  }
-          |}
+            |package com.sam
+            |trait Iterator {
+            |  def next : Int
+            |}
+            |object Test {
+            |  val iterator = new Iterator {
+            |    var last = -1
+            |    def next: Int = {
+            |      last = last + 1
+            |      last
+            |    }
+            |  }
+            |}
         """.stripMargin
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings.size shouldBe 0

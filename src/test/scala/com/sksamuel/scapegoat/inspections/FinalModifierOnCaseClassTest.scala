@@ -1,21 +1,19 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class FinalModifierOnCaseClassTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class FinalModifierOnCaseClassTest extends InspectionTest {
 
   override val inspections = Seq(new FinalModifierOnCaseClass)
 
   private def assertFinalModOnCaseClass(code: String): Unit = {
     compileCodeSnippet(code)
     compiler.scapegoat.feedback.warnings.size shouldBe 1
-    compiler.scapegoat.feedback.warnings.head.text shouldBe ("Missing final modifier on case class")
+    compiler.scapegoat.feedback.warnings.head.text shouldBe "Missing final modifier on case class"
   }
 
   private def assertNoFinalModOnCaseClass(code: String): Unit = {
     compileCodeSnippet(code)
-    compiler.scapegoat.feedback.warnings should be ('empty)
+    compiler.scapegoat.feedback.warnings shouldBe empty
   }
 
   "Missing final modifier on case class" - {
@@ -28,7 +26,7 @@ class FinalModifierOnCaseClassTest extends FreeSpec with Matchers with PluginRun
 
       "when used within an object definition" in {
         val code = """object Test{
-                      |  case class Person(name: String)
+                     |  case class Person(name: String)
                       }""".stripMargin
 
         assertFinalModOnCaseClass(code)
@@ -44,11 +42,11 @@ class FinalModifierOnCaseClassTest extends FreeSpec with Matchers with PluginRun
 
       "when used on issue example" in {
         val code = """object Test {
-                      |  sealed abstract case class Nat(toInt: Int)
-                      |  object Nat {
-                      |    def fromInt(n: Int): Option[Nat] =
-                      |      if (n >= 0) Some(new Nat(n) {}) else None
-                      |  }
+                     |  sealed abstract case class Nat(toInt: Int)
+                     |  object Nat {
+                     |    def fromInt(n: Int): Option[Nat] =
+                     |      if (n >= 0) Some(new Nat(n) {}) else None
+                     |  }
                       }""".stripMargin
 
         assertNoFinalModOnCaseClass(code)

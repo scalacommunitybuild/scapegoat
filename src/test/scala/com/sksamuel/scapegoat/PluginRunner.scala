@@ -3,18 +3,18 @@ package com.sksamuel.scapegoat
 import java.io.{File, FileNotFoundException}
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 import scala.tools.nsc.reporters.ConsoleReporter
 
 /**
  * @author Stephen Samuel
- * @author Eugene Sypachev (Axblade)
  */
 trait PluginRunner {
 
   val settings = {
     val s = new scala.tools.nsc.Settings
-    for (dummy <- Option(System.getProperty("printphases"))) {
+    for (_ <- Option(System.getProperty("printphases"))) {
       s.Xprint.value = List("all")
       s.Yrangepos.value = true
       s.Yposdebug.value = true
@@ -30,16 +30,17 @@ trait PluginRunner {
   lazy val compiler = new ScapegoatCompiler(settings, inspections, reporter)
 
   def writeCodeSnippetToTempFile(code: String): File = {
-    val file = File.createTempFile("scapegoat_snippet", ".scala")
-    org.apache.commons.io.FileUtils.write(file, code, StandardCharsets.UTF_8)
+    val file = Files
+      .write(Files.createTempFile("scapegoat_snippet", ".scala"), code.getBytes(StandardCharsets.UTF_8))
+      .toFile
     file.deleteOnExit()
     file
   }
 
-  def compileCodeSnippet(code: String): ScapegoatCompiler = compileSourceFiles(writeCodeSnippetToTempFile(code))
-  def compileSourceResources(urls: URL*): ScapegoatCompiler = {
+  def compileCodeSnippet(code: String): ScapegoatCompiler =
+    compileSourceFiles(writeCodeSnippetToTempFile(code))
+  def compileSourceResources(urls: URL*): ScapegoatCompiler =
     compileSourceFiles(urls.map(_.getFile).map(new File(_)): _*)
-  }
   def compileSourceFiles(files: File*): ScapegoatCompiler = {
     reporter.flush()
     val command = new scala.tools.nsc.CompilerCommand(files.map(_.getAbsolutePath).toList, settings)
@@ -48,10 +49,11 @@ trait PluginRunner {
   }
 }
 
-class ScapegoatCompiler(settings: scala.tools.nsc.Settings,
+class ScapegoatCompiler(
+  settings: scala.tools.nsc.Settings,
   inspections: Seq[Inspection],
-  reporter: ConsoleReporter)
-    extends scala.tools.nsc.Global(settings, reporter) {
+  reporter: ConsoleReporter
+) extends scala.tools.nsc.Global(settings, reporter) {
 
   val scapegoat = new ScapegoatComponent(this, inspections)
   scapegoat.disableHTML = true

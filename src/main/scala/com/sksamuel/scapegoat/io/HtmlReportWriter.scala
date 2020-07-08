@@ -1,13 +1,16 @@
 package com.sksamuel.scapegoat.io
 
-import com.sksamuel.scapegoat.{ Levels, Feedback }
-
 import scala.xml.Unparsed
 
-/** @author Stephen Samuel */
-object HtmlReportWriter {
+import com.sksamuel.scapegoat.{Feedback, Levels}
 
-  val css =
+/**
+ * @author Stephen Samuel */
+object HtmlReportWriter extends ReportWriter {
+
+  override protected def fileName: String = "scapegoat.html"
+
+  private val css =
     """
       |      body {
       |        font-family: 'Ubuntu', sans-serif;
@@ -60,66 +63,75 @@ object HtmlReportWriter {
       |
     """.stripMargin
 
-  def header =
+  private def header =
     <head>
       <title>Scapegoat Inspection Reporter</title>{
-        Unparsed(
-          "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css\" rel=\"stylesheet\">")
-      }{
-        Unparsed(
-          """<link href='https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,300italic,400italic,500italic,700italic' rel='stylesheet' type='text/css'>""")
-      }{
-        Unparsed { """<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>""" }
-      }<style>
-         { css }
+      Unparsed(
+        "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css\" rel=\"stylesheet\">"
+      )
+    }{
+      Unparsed(
+        """<link href='https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,300italic,400italic,500italic,700italic' rel='stylesheet' type='text/css'>"""
+      )
+    }{
+      Unparsed {
+        """<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>"""
+      }
+    }<style>
+         {css}
        </style>
     </head>
 
-  def body(reporter: Feedback) =
+  private def body(reporter: Feedback) =
     <body>
       <h1>Scapegoat Inspections</h1>
       <h3>
         Errors
-        { reporter.warnings(Levels.Error).size.toString }
+        {reporter.warnings(Levels.Error).size.toString}
         Warnings
-        { reporter.warnings(Levels.Warning).size.toString }
+        {reporter.warnings(Levels.Warning).size.toString}
         Infos
-        { reporter.warnings(Levels.Info).size.toString }
-      </h3>{ warnings(reporter) }
+        {reporter.warnings(Levels.Info).size.toString}
+      </h3>{warnings(reporter)}
     </body>
 
-  def warnings(reporter: Feedback) = {
-    reporter.warnings.map {
-      case warning =>
-        val source = warning.sourceFileNormalized + ":" + warning.line
-        <div class="warning">
+  private def warnings(reporter: Feedback) = {
+    reporter.warningsWithMinimalLevel.map { warning =>
+      val source = warning.sourceFileNormalized + ":" + warning.line
+      <div class="warning">
           <div class="source">
-            { source }
+            {source}
           </div>
           <div class="title">
             {
-              warning.level match {
-                case Levels.Info=> <span class="label label-info">Info</span>
-                case Levels.Warning=> <span class="label label-warning">Warning</span>
-                case Levels.Error=> <span class="label label-danger">Error</span>
-              }
-            }
-            &nbsp;{ warning.text }
-            &nbsp;<span class="inspection">{ warning.inspection }</span>
+        warning.level match {
+          case Levels.Info    => <span class="label label-info">Info</span>
+          case Levels.Warning => <span class="label label-warning">Warning</span>
+          case Levels.Error   => <span class="label label-danger">Error</span>
+        }
+      }&nbsp;{warning.text}&nbsp; <span class="inspection">
+            {warning.inspection}
+          </span>
+          </div>
+          <div>
+            {warning.explanation}
           </div>{
-            warning.snippet match {
-              case None=>
-              case Some(snippet) =>
-                <div class="snippet">
-                  { snippet }
-                </div>
-            }
-          }
+        warning.snippet match {
+          case None =>
+          case Some(snippet) =>
+            <div class="snippet">
+              {snippet}
+            </div>
+        }
+      }
         </div>
     }
   }
 
-  def generate(reporter: Feedback) = <html>
-                                       { header }{ body(reporter) }
-                                     </html>
+  private def toHTML(reporter: Feedback) =
+    <html>
+      {header}{body(reporter)}
+    </html>
+
+  override protected def generate(feedback: Feedback): String = toHTML(feedback).toString()
 }

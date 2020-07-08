@@ -1,13 +1,7 @@
 package com.sksamuel.scapegoat.inspections.math
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ OneInstancePerTest, FreeSpec, Matchers }
-
-class DivideByOneTest
-    extends FreeSpec
-    with PluginRunner
-    with Matchers
-    with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class DivideByOneTest extends InspectionTest {
 
   override val inspections = Seq(new DivideByOne)
 

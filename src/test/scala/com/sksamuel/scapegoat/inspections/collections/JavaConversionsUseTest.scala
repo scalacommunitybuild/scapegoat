@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.collections
 
-import com.sksamuel.scapegoat.{ PluginRunner, isScala213 }
-import org.scalatest.{ FreeSpec, Matchers }
+import com.sksamuel.scapegoat.{isScala213, InspectionTest}
 
 /** @author Stephen Samuel */
-class JavaConversionsUseTest extends FreeSpec with Matchers with PluginRunner {
+class JavaConversionsUseTest extends InspectionTest {
 
   override val inspections = Seq(new JavaConversionsUse)
 

@@ -1,10 +1,11 @@
 Scapegoat
 =========
 
-[![travis image](https://travis-ci.org/sksamuel/scapegoat.svg?branch=master)](https://travis-ci.org/sksamuel/scapegoat)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.11%22)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.12%22)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.13.svg?label=latest%20release%20for%202.13"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.13%22)
+[![Codecov](https://img.shields.io/codecov/c/github/sksamuel/scapegoat)](https://codecov.io/gh/sksamuel/scapegoat)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.11.12.svg?label=latest%20release%20for%202.11.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.11.12%22)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.12.11.svg?label=latest%20release%20for%202.12.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.12.11%22)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.13.3.svg?label=latest%20release%20for%202.13.3"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scalac-scapegoat-plugin_2.13.3%22)
+[![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 Scapegoat is a Scala static code analyzer, what is more colloquially known as a code lint tool or linter. Scapegoat works in a similar vein to Java's [FindBugs](http://findbugs.sourceforge.net/) or [checkstyle](http://checkstyle.sourceforge.net/), or Scala's [Scalastyle](https://github.com/scalastyle/scalastyle).
 
@@ -27,8 +28,8 @@ Firstly you need to add scapegoat plugin as a dependency:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scapegoat</groupId>
-    <artifactId>scalac-scapegoat-plugin_${scala.binary.version}</artifactId>
-    <version>1.3.3</version>
+    <artifactId>scalac-scapegoat-plugin_${scala.version}</artifactId>
+    <version>1.3.12</version>
 </dependency>
 ```
 
@@ -96,8 +97,23 @@ The only required parameter is `dataDir` (where report will be generated):
 
 You can pass other configuration flags adding it to the `additionalParameters` list, e.g.
 
-`"-P:scapegoat:disabledInspections:FinalModifierOnCaseClass""`
+`"-P:scapegoat:disabledInspections:FinalModifierOnCaseClass"`
 
+#### Full list of compiler flags
+
+| Flag | Parameters | Required |
+|------|------------|----------|
+|`-P:scapegoat:dataDir:`|Path to reports directory for the plugin.|true|
+|`-P:scapegoat:disabledInspections:`|Colon separated list of disabled inspections (defaults to none).|false|
+|`-P:scapegoat:enabledInspections:`|Colon separated list of enabled inspections (defaults to all).|false|
+|`-P:scapegoat:customInspectors:`|Colon separated list of custom inspections.|false|
+|`-P:scapegoat:ignoredFiles:`|Colon separated list of regexes to match files to ignore.|false|
+|`-P:scapegoat:verbose:`|Boolean flag that enables/disables verbose console messages.|false|
+|`-P:scapegoat:consoleOutput:`|Boolean flag that enables/disables console report output.|false|
+|`-P:scapegoat:reports:`|Colon separated list of reports to generate. Valid options are `none`, `xml`, `html`, `scalastyle`, `markdown`, or `all`.|false|
+|`-P:scapegoat:overrideLevels:`|Overrides the built in warning levels. Should be a colon separated list of `name=level` expressions.|false|
+|`-P:scapegoat:sourcePrefix:`|Overrides source prefix if it differs from `src/main/scala`, for ex. `app/` for Play applications.|false|
+|`-P:scapegoat:minimalWarnLevel:`|Provides minimal level of inspection displayed in reports.|false|
 
 ### Reports
 
@@ -121,44 +137,6 @@ And if you prefer a prettier report, here is a screen shot of the type of HTML r
 ### Configuration
 
 For instructions on suppressing warnings by file, by inspection or by line see [the sbt-scapegoat README](https://github.com/sksamuel/sbt-scapegoat).
-
-### False positives
-
-Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
-
-### Changelog
-
-* **0.94.0** - Fixed some more false positives. Added MethodNames inspection, StripMarginOnRegex inspection, and VariableShadowing inspection (the latter being a work in progress, please report feedback).
-
-* **0.93.2** - Fixed false positives.
-
-* **0.93.1** - #67 fixed var args in duplicate map check, #66 ignoring methods returning nothing when checking for unused params, #69 fixed extended classes false pos, #73 Removed incorrect inspection, #64 updated suppression to use tree.symbol.isSynthetic instead of mods.synth, Merge pull request #77 from paulp/psp, Give access to the inspection logic through the sbt console, #76 Improve the contains test.
-
-* **0.93.0** - Added ability to define multiple traversers that run in separate phases of the compiler, #58 Updated suppression to work on objects and classes, #60 handling case objects in suspicious match on class object, Allow all inspections to be disabled, other fixes
-
-* **0.92.2** - Added debug option, Made summary optional and disabled in tests, Improved var could be val #54, Split null inspections into assignment and invocation #53, Bumped count on operators to > 2, loads of fixes, loads of verboseness removed.
-
-* **0.92.1** - Fixed a load of false positives.
-
-* **0.92.0** - Added swallowed exception inspection, Added public finalizer inspection, Added use expm1(x) instead of exp(x) - 1 inspection, Added use log1p(x) instead of log(x + 1) inspection, Added use log10(x) instead of log(x)/log(10) inspection, Added use cbrt inspection
-
-* **0.91.0** - Updated logging format to include less [scapegoat] everywhere, Added scala.math and java.StrictMath to useSqrt, Added ignored files patterns option, Added wildcard import inspection, Added comparison to empty set inspection
-
-* **0.90.17** - Added looks like interpolated string inspection, Added SuspiciousMatchOnClassObject inspection, Updated varuse to not warn on vars in actors #46, Added comparison to empty list inspection, #37 Changed emptyinterpolated string to error, #37 Fixed warning on max parameters
-
-* **0.90.14** - Bunch of bug fixes for false positives. No new inspections.
-
-* **0.90.13** - Fixed NPE in VarClosure inspection, Added Object Names inspection, Added classnames inspection, Added avoid to minus one inspection.
-
-* **0.90.12** - New inspections: unnecessary override, duplicate import, pointless type bounds, max parameters, var closure, method returning any. Updated repeated case body to ignore bodies with two or less statements #28. Removed false positives on getter/setter #27.
-
-* **0.90.11** - Added empty for inspection, AnyUse inspection, Added ArrayEquals inspection, Added double negation inspection, Disabled expression as statement inspection by default, Added avoid operator overload inspection, #25 improving repeated case bodies, Added lonely sealed trait. Added postInspection call to inspections
-
-* **0.90.10** - Added type shadowing inspection, var could be val inspection, unreachable catch inspection and unnecessary toString inspection
-
-* **0.90.09** - Added new inspections: bounded by final type, empty while block, prefer vector empty, finalizer without super, impossible option size condition, filter dot head, repeated case body. Added `infos` to HTML output header
-
-* **0.90.8** - Fixed erroneous partial functions inspection. Added inspection for empty case class. Changed levels in output to lowercase. Added console output option. Fixed seq empty on non empty seq. Changed return usage to info. Fixed odd issue with empty tree. Changed unused parameter in override to be info. Ignoring all synthetic method added to case classes. Fixed while(true) being detected by ConstantIf
 
 ### Inspections
 
@@ -254,6 +232,7 @@ There are currently 118 inspections. An overview list is given, followed by a mo
 | RedundantFinalModifierOnVar | Redundant `final` modifier on var that cannot be overridden | Info |
 | RedundantFinalizer | Checks for empty finalizers. | Warning |
 | RepeatedCaseBody | Checks for case statements which have the same body | Warning |
+| RepeatedIfElseBody | Checks for the main branch and the else branch of an `if` being the same | Warning |
 | ReverseFunc | `reverse` followed by `head`, `headOption`, `iterator`, or`map` can be replaced, respectively, with `last`, `lastOption`, `reverseIterator`, or `reverseMap` | Info |
 | ReverseTailReverse | `.reverse.tail.reverse` can be replaced with `init` | Info |
 | ReverseTakeReverse | `.reverse.take(...).reverse` can be replaced with `takeRight` | Info |
@@ -263,17 +242,15 @@ There are currently 118 inspections. An overview list is given, followed by a mo
 | SuspiciousMatchOnClassObject | Finds code where matching is taking place on class literals | Warning |
 | SwallowedException | Finds catch blocks that don't handle caught exceptions | Warning |
 | SwapSortFilter | `sort.filter` can be replaced with `filter.sort` for performance | Info |
-| TraversableHead | Looks for unsafe usage of `Traversable.head` | Error |
-| TraversableLast | Looks for unsafe usage of `Traversable.last` | Error |
 | TryGet | Checks for use of `Try.get` | Error |
 | TypeShadowing | Checks for shadowed type parameters in methods | Warning |
+| UnnecessaryConversion | Checks for unnecessary `toInt` on instances of Int or `toString` on Strings, etc. | Warning |
 | UnnecessaryIf | Checks for code like `if (expr) true else false` | Info |
 | UnnecessaryReturnUse | Checks for use of `return` keyword in blocks | Info |
-| UnnecessaryToInt | Checks for unnecessary `toInt` on instances of Int | Warning |
-| UnnecessaryToString | Checks for unnecessary `toString` on instances of String | Warning |
 | UnreachableCatch | Checks for catch clauses that cannot be reached | Warning |
 | UnsafeContains | Checks for `List.contains(value)` for invalid types | Error |
 | UnsafeStringContains | Checks for `String.contains(value)` for invalid types | Error |
+| UnsafeTraversableMethods | Check unsafe traversable method usages (head, tail, init, last, reduce, reduceLeft, reduceRight, max, maxBy, min, minBy) | Error |
 | UnusedMethodParameter | Checks for unused method parameters | Warning |
 | UseCbrt | Checks for use of `math.pow` for calculating `math.cbrt` | Info |
 | UseExpM1 | Checks for use of `math.exp(x) - 1` instead of `math.expm1(x)` | Info |
@@ -282,6 +259,7 @@ There are currently 118 inspections. An overview list is given, followed by a mo
 | UseSqrt | Checks for use of `math.pow` for calculating `math.sqrt` | Info |
 | VarClosure | Finds closures that reference var | Warning |
 | VarCouldBeVal | Checks for `var`s that could be declared as `val`s | Warning |
+| VariableShadowing | Checks for multiple uses of the variable name in nested scopes | Warning |
 | WhileTrue | Checks for code that uses a `while(true)` or `do { } while(true)` block. | Warning |
 | ZeroNumerator | Checks for dividing by 0 by a number, eg `0 / x` which will always return `0` | Warning |
 
@@ -319,7 +297,7 @@ Checks for invalid regex literals that would fail at compile time. Either dangli
 
 Checks for .size on an instance of List. Eg, `val a = List(1,2,3); a.size`
 
-*Rationale* List.size is O(n) so for performance reasons if .size is needed on a list that could be large, consider using an alternative with O(1), eg Array, Vector or ListBuffer.
+*Rationale*: List.size is O(n) so for performance reasons if .size is needed on a list that could be large, consider using an alternative with O(1), eg Array, Vector or ListBuffer.
 
 ##### Redundant finalizer
 

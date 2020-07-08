@@ -1,16 +1,10 @@
 package com.sksamuel.scapegoat.inspections.names
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.naming.MethodNames
 
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
 /** @author Stephen Samuel */
-class MethodNamesTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class MethodNamesTest extends InspectionTest {
 
   override val inspections = Seq(new MethodNames)
 
@@ -34,7 +28,15 @@ class MethodNamesTest
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings.size shouldBe 1
       }
+      "for something similar to unary operators, yet different (#271)" in {
+        val code = """case class Amount(amount: BigDecimal) {
+                     |  def unary_A = Amount(-amount)
+                     |}""".stripMargin
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings should have size 1
+      }
     }
+
     "should not report warning" - {
       "for camel case methods" in {
         val code =
@@ -121,6 +123,16 @@ class MethodNamesTest
              def hallo_=(x: String): Unit = {}
           }
           """
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings should have size 0
+      }
+      "for unary operators definition (#271)" in {
+        val code = """case class Amount(amount: BigDecimal) {
+                     |  def unary_- = Amount(-amount)
+                     |  def unary_+ = Amount(amount)
+                     |  def unary_! = Amount(-amount)
+                     |  def unary_~ = Amount(-amount)
+                     |}""".stripMargin
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings should have size 0
       }

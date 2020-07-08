@@ -1,13 +1,7 @@
 package com.sksamuel.scapegoat.inspections.math
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class ZeroNumeratorTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class ZeroNumeratorTest extends InspectionTest {
 
   override val inspections = Seq(new ZeroNumerator)
 

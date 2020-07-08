@@ -1,6 +1,7 @@
 package com.sksamuel.scapegoat
 
-/** @author Stephen Samuel */
+/**
+ * @author Stephen Samuel */
 sealed trait Level
 
 object Levels {
@@ -41,11 +42,11 @@ object Levels {
    */
   case object Info extends Level
 
-  def fromName(name: String): Level = name.toLowerCase() match {
-    case "error"   => Error
-    case "warning" => Warning
-    case "info"    => Info
-    case _ => throw new IllegalArgumentException(
-      s"Unrecognised level '$name'")
-  }
+  def fromName(name: String): Level =
+    name.toLowerCase() match {
+      case "error"   => Error
+      case "warning" => Warning
+      case "info"    => Info
+      case _         => throw new IllegalArgumentException(s"Unrecognised level '$name'")
+    }
 }

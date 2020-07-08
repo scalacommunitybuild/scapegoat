@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.collections
 
-import com.sksamuel.scapegoat.{ PluginRunner, isScala213 }
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.{isScala213, InspectionTest}
 
 /** @author Stephen Samuel */
-class PredefTraversableIsMutableTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class PredefTraversableIsMutableTest extends InspectionTest {
 
   override val inspections = Seq(new PredefTraversableIsMutable)
 

@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.string
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{OneInstancePerTest, FreeSpec, Matchers}
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Zack Grannan */
-class UnsafeStringContainsTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class UnsafeStringContainsTest extends InspectionTest {
   override val inspections = Seq(new UnsafeStringContains)
   "unsafe string contains" - {
     "should report warning" in {

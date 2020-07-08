@@ -1,11 +1,10 @@
 package com.sksamuel.scapegoat.inspections.inferrence
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.inference.ProductWithSerializableInferred
-import org.scalatest.{ FreeSpec, Matchers }
 
 /** @author Stephen Samuel */
-class ProductWithSerializableInferredTest extends FreeSpec with Matchers with PluginRunner {
+class ProductWithSerializableInferredTest extends InspectionTest {
 
   override val inspections = Seq(new ProductWithSerializableInferred)
 

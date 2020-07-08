@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.style
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ OneInstancePerTest, FreeSpec, Matchers }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class AvoidOperatorOverloadTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class AvoidOperatorOverloadTest extends InspectionTest {
 
   override val inspections = Seq(new AvoidOperatorOverload)
 

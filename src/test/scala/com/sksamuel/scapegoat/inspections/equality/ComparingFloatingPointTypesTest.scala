@@ -1,14 +1,9 @@
 package com.sksamuel.scapegoat.inspections.equality
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class ComparingFloatingPointTypesTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class ComparingFloatingPointTypesTest extends InspectionTest {
 
   override val inspections = Seq(new ComparingFloatingPointTypes)
 

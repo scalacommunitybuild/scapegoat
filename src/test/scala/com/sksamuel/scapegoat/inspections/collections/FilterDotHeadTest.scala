@@ -1,14 +1,9 @@
 package com.sksamuel.scapegoat.inspections.collections
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class FilterDotHeadTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class FilterDotHeadTest extends InspectionTest {
 
   override val inspections = Seq(new FilterDotHead)
 

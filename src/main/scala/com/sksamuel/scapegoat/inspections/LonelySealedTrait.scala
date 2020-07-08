@@ -1,47 +1,53 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
-
 import scala.collection.mutable
 
-/** @author Stephen Samuel */
-class LonelySealedTrait extends Inspection("Lonely sealed trait", Levels.Error) {
+import com.sksamuel.scapegoat.{Inspection, InspectionContext, Inspector, Levels}
 
-  override def inspector(context: InspectionContext): Inspector = new Inspector(context) {
+/**
+ * @author Stephen Samuel */
+class LonelySealedTrait
+    extends Inspection(
+      text = "Lonely sealed trait",
+      defaultLevel = Levels.Error,
+      description = "Checks for sealed traits without any classes extending it.",
+      explanation = "A sealed trait that is not extended is considered dead code."
+    ) {
 
-    import context.global._
+  override def inspector(context: InspectionContext): Inspector =
+    new Inspector(context) {
 
-    private val sealedClasses = mutable.HashMap[String, ClassDef]()
-    private val implementedClasses = mutable.HashSet[String]()
+      import context.global._
 
-    override def postInspection(): Unit = {
-      for ((name, cdef) <- sealedClasses) {
-        if (!implementedClasses.contains(name)) {
-          context.warn(cdef.pos, self, s"Sealed trait ${cdef.name} has no implementing classes")
-        }
+      private val sealedClasses = mutable.HashMap[String, ClassDef]()
+      private val implementedClasses = mutable.HashSet[String]()
+
+      override def postInspection(): Unit = {
+        for ((name, cdef) <- sealedClasses)
+          if (!implementedClasses.contains(name))
+            context.warn(cdef.pos, self)
       }
-    }
 
-    private def inspectParents(parents: List[Tree]): Unit = {
-      parents.foreach {
-        case parent =>
+      private def inspectParents(parents: List[Tree]): Unit = {
+        parents.foreach { parent =>
           for (c <- parent.tpe.baseClasses)
             implementedClasses.add(c.name.toString)
-      }
-    }
-
-    override def postTyperTraverser = Some apply new context.Traverser {
-
-      override def inspect(tree: Tree): Unit = {
-        tree match {
-          case cdef @ ClassDef(mods, name, _, _) if mods.isSealed =>
-            sealedClasses.put(cdef.name.toString, cdef)
-          case ClassDef(_, name, _, Template(parents, _, _)) => inspectParents(parents)
-          case ModuleDef(_, name, Template(parents, _, _)) => inspectParents(parents)
-          case _ =>
         }
-        continue(tree)
       }
+
+      override def postTyperTraverser =
+        new context.Traverser {
+
+          override def inspect(tree: Tree): Unit = {
+            tree match {
+              case cdef @ ClassDef(mods, _, _, _) if mods.isSealed =>
+                sealedClasses.put(cdef.name.toString, cdef)
+              case ClassDef(_, _, _, Template(parents, _, _)) => inspectParents(parents)
+              case ModuleDef(_, _, Template(parents, _, _))   => inspectParents(parents)
+              case _                                          =>
+            }
+            continue(tree)
+          }
+        }
     }
-  }
 }

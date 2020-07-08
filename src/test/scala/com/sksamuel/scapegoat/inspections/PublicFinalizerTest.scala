@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class PublicFinalizerTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class PublicFinalizerTest extends InspectionTest {
 
   override val inspections = Seq(new PublicFinalizer)
 

@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.string
 
-import com.sksamuel.scapegoat.{ PluginRunner, isScala213 }
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.{isScala213, InspectionTest}
 
 /** @author Stephen Samuel */
-class EmptyInterpolatedStringTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class EmptyInterpolatedStringTest extends InspectionTest {
 
   override val inspections = Seq(new EmptyInterpolatedString)
 

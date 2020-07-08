@@ -1,13 +1,7 @@
 package com.sksamuel.scapegoat.inspections.math
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class NanComparisonTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class NanComparisonTest extends InspectionTest {
 
   override val inspections = Seq(new NanComparison)
 

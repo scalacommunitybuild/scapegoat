@@ -1,36 +1,56 @@
-import com.typesafe.sbt.pgp.PgpKeys
-import sbt.Keys._
+// compiler plugins
+addCompilerPlugin("org.scalameta" % "semanticdb-scalac" % "4.3.18" cross CrossVersion.full)
 
 name := "scalac-scapegoat-plugin"
-
 organization := "com.sksamuel.scapegoat"
+description := "Scala compiler plugin for static code analysis"
+homepage := Some(url("https://github.com/sksamuel/scapegoat"))
+licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/sksamuel/scapegoat"),
+    "scm:git@github.com:sksamuel/scapegoat.git",
+    Some("scm:git@github.com:sksamuel/scapegoat.git")
+  )
+)
+developers := List(
+  Developer(
+    "sksamuel",
+    "sksamuel",
+    "@sksamuel",
+    url("https://github.com/sksamuel")
+  )
+)
 
-scalaVersion := "2.12.8"
-crossScalaVersions := Seq("2.11.12", "2.13.0", scalaVersion.value)
+scalaVersion := "2.13.3"
+crossScalaVersions := Seq("2.11.12", "2.12.10", "2.12.11", "2.13.2", "2.13.3")
+autoScalaLibrary := false
+crossVersion := CrossVersion.full
+crossTarget := {
+  // workaround for https://github.com/sbt/sbt/issues/5097
+  target.value / s"scala-${scalaVersion.value}"
+}
 
-sbtVersion in Global := "1.1.6"
-
-SbtPgp.autoImport.useGpg := true
-
-SbtPgp.autoImport.useGpgAgent := true
+// https://github.com/sksamuel/scapegoat/issues/298
+ThisBuild / useCoursier := false
 
 val scalac13Options = Seq(
   "-Xlint:adapted-args",
   "-Xlint:inaccessible",
   "-Xlint:infer-any",
-  "-Xlint:nullary-override",
   "-Xlint:nullary-unit",
+  "-Yrangepos",
+  "-Ywarn-unused"
 )
-
 val scalac12Options = Seq(
   "-Xlint:adapted-args",
   "-Ywarn-inaccessible",
   "-Ywarn-infer-any",
   "-Xlint:nullary-override",
   "-Xlint:nullary-unit",
-  "-Xmax-classfile-name", "254"
+  "-Xmax-classfile-name",
+  "254"
 )
-
 val scalac11Options = Seq(
   "-Ywarn-adapted-args",
   "-Ywarn-inaccessible",
@@ -39,28 +59,33 @@ val scalac11Options = Seq(
   "-Ywarn-dead-code",
   "-Ywarn-nullary-unit",
   "-Ywarn-numeric-widen",
-  "-Xmax-classfile-name", "254",
+  "-Xmax-classfile-name",
+  "254"
   //"-Ywarn-value-discard"
 )
-
 scalacOptions := {
   val common = Seq(
     "-unchecked",
     "-deprecation",
     "-feature",
-    "-encoding", "utf8",
+    "-encoding",
+    "utf8",
     "-Xlint"
   )
-
   common ++ (scalaBinaryVersion.value match {
     case "2.11" => scalac11Options
     case "2.12" => scalac12Options
-    case "2.13" => scalac13Options
+    case "2.13" => scalac13Options ++ (
+      scalaVersion.value.split('.') match {
+        case Array(_, _, patch) if Set("0", "1", "2")(patch) => Seq("-Xlint:nullary-override")
+        case _ => Seq.empty[String]
+      })
   })
 }
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
-fullClasspath in console in Compile ++= (fullClasspath in Test).value // because that's where "PluginRunner" is
-
+// because that's where "PluginRunner" is
+fullClasspath in console in Compile ++= (fullClasspath in Test).value
 initialCommands in console := s"""
 import com.sksamuel.scapegoat._
 def check(code: String) = {
@@ -69,68 +94,63 @@ def check(code: String) = {
   // runner.reporter.reset
   val c = runner compileCodeSnippet code
   val feedback = c.scapegoat.feedback
-  feedback.warnings map (x => "%-40s  %s".format(x.text, x.snippet getOrElse "")) foreach println
+  feedback.warnings map (x => "%-40s %s %s".format(x.text, x.explanation, x.snippet.getOrElse(""))) foreach println
   feedback
 }
 """
 
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
-
 libraryDependencies ++= Seq(
-  "org.scala-lang"                  %     "scala-reflect"           % scalaVersion.value,
-  "org.scala-lang"                  %     "scala-compiler"          % scalaVersion.value      % "provided",
-  "org.scala-lang.modules"          %%    "scala-xml"               % "1.2.0",
-  "org.scala-lang.modules"          %%    "scala-collection-compat" % "2.0.0",
-  "org.scala-lang"                  %     "scala-compiler"          % scalaVersion.value      % "test",
-  "commons-io"                      %     "commons-io"              % "2.5"                   % "test",
-  "org.scalatest"                   %%    "scalatest"               % "3.0.8"                 % "test",
-  "org.mockito"                     %     "mockito-all"             % "1.10.19"               % "test",
-  "joda-time"                       %     "joda-time"               % "2.9.9"                 % "test",
-  "org.joda"                        %     "joda-convert"            % "1.9.2"                 % "test",
-  "org.slf4j"                       %     "slf4j-api"               % "1.7.25"                % "test"
+  "org.scala-lang"         % "scala-reflect"  % scalaVersion.value % "provided",
+  "org.scala-lang"         % "scala-compiler" % scalaVersion.value % "provided",
+  "org.scala-lang.modules" %% "scala-xml"     % "1.3.0" excludeAll (
+    ExclusionRule(organization = "org.scala-lang")
+  ),
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6" excludeAll (
+    ExclusionRule(organization = "org.scala-lang")
+  ),
+  "org.scala-lang" % "scala-compiler" % scalaVersion.value % "test",
+  "org.scalatest"  %% "scalatest"     % "3.2.0"            % "test",
+  "org.mockito"    % "mockito-all"    % "1.10.19"          % "test",
+  "joda-time"      % "joda-time"      % "2.10.6"           % "test",
+  "org.joda"       % "joda-convert"   % "2.2.1"            % "test",
+  "org.slf4j"      % "slf4j-api"      % "1.7.30"           % "test"
 )
 
-sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value
-
-sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true
-
-publishTo := Some(
-  if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
-  else
-    Opts.resolver.sonatypeStaging
-)
-
-publishMavenStyle := true
-
-publishArtifact in Test := false
-
+// Test
+fork in (Test, run) := true
+logBuffered in Test := false
 parallelExecution in Test := false
+
+// ScalaTest reporter config:
+// -o - standard output,
+// D - show all durations,
+// T - show reminder of failed and cancelled tests with short stack traces,
+// F - show full stack traces.
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDTF")
+
+// Assembly
+// include the scala xml and compat modules into the final jar, shaded
+assemblyShadeRules in assembly := Seq(
+  ShadeRule.rename("scala.xml.**" -> "scapegoat.xml.@1").inAll,
+  ShadeRule.rename("scala.collection.compat.**" -> "scapegoat.compat.@1").inAll
+)
+packageBin in Compile := crossTarget.value / (assemblyJarName in assembly).value
+makePom := makePom.dependsOn(assembly).value
+test in assembly := {} // do not run tests during assembly
+publishArtifact in Test := false
 
 fork in Test := true
 
-pomIncludeRepository := {
-  _ => false
-}
+// Scalafix
+scalafixDependencies in ThisBuild += "com.nequissimus" %% "sort-imports" % "0.3.1"
+addCommandAlias("fix", "all compile:scalafix test:scalafix; fixImports")
+addCommandAlias("fixImports", "compile:scalafix SortImports; test:scalafix SortImports")
+addCommandAlias("fixCheck", "compile:scalafix --check; test:scalafix --check; fixCheckImports")
+addCommandAlias("fixCheckImports", "compile:scalafix --check SortImports; test:scalafix --check SortImports")
 
-pomExtra := {
-  <url>https://github.com/sksamuel/scapegoat</url>
-    <licenses>
-      <license>
-        <name>Apache 2</name>
-        <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
-    <scm>
-      <url>git@github.com:sksamuel/scapegoat.git</url>
-      <connection>scm:git@github.com:sksamuel/scapegoat.git</connection>
-    </scm>
-    <developers>
-      <developer>
-        <id>sksamuel</id>
-        <name>sksamuel</name>
-        <url>http://github.com/sksamuel</url>
-      </developer>
-    </developers>
-}
+// Scalafmt
+scalafmtOnCompile in ThisBuild :=
+  sys.env
+    .get("GITHUB_ACTIONS")
+    .forall(_.toLowerCase == "false")
+>>>>>>> origin/master

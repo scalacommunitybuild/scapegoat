@@ -1,15 +1,10 @@
 package com.sksamuel.scapegoat.inspections.names
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.naming.ClassNames
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
 
 /** @author Stephen Samuel */
-class ClassNamesTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class ClassNamesTest extends InspectionTest {
 
   override val inspections = Seq(new ClassNames)
 

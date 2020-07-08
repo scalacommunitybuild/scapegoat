@@ -1,12 +1,10 @@
 package com.sksamuel.scapegoat.inspections.unnecessary
 
-import com.sksamuel.scapegoat.PluginRunner
+import com.sksamuel.scapegoat.InspectionTest
 import com.sksamuel.scapegoat.inspections.unneccesary.UnnecessaryIf
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
 
 /** @author Stephen Samuel */
-class UnnecessaryIfTest
-    extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class UnnecessaryIfTest extends InspectionTest {
 
   override val inspections = Seq(new UnnecessaryIf)
 

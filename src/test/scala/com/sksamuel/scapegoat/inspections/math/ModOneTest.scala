@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.math
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class ModOneTest extends FreeSpec with PluginRunner with Matchers {
+class ModOneTest extends InspectionTest {
 
   override val inspections = Seq(new ModOne)
 

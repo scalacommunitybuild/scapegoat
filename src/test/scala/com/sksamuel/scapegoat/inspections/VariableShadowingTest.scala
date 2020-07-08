@@ -1,15 +1,9 @@
 package com.sksamuel.scapegoat.inspections
 
-import com.sksamuel.scapegoat.PluginRunner
-
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class VariableShadowingTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class VariableShadowingTest extends InspectionTest {
 
   override val inspections = Seq(new VariableShadowing)
 
@@ -113,6 +107,93 @@ class VariableShadowingTest
             |  }
             |} """.stripMargin
 
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when two if branches define the same variable" in {
+        val code =
+          """class Test {
+            |  if (1 > 0) {
+            |    val something = 4
+            |    println(something+1)
+            |  } else {
+            |    val something = 2
+            |    println(something+2)
+            |  }
+            |}""".stripMargin
+
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when two sibling cases define the same local variable" in {
+        val code =
+          """class Test {
+            |  val possibility: Option[Int] = Some(3) 
+            |  possibility match {
+            |    case Some(x) => 
+            |      val y = x + 1    
+            |      println(y)
+            |    case None =>
+            |      val y = 0
+            |      println(y)     
+            |  }
+            |}""".stripMargin
+
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when visiting a match case, especially not visit it twice" in {
+        val code =
+          """class Test {
+            |  val possibility: Option[Int] = Some(3)
+            |  possibility match {
+            |    case Some(x) =>
+            |      val y = x + 1
+            |      println(y)
+            |    case None => println("None")
+            |  }
+            |}""".stripMargin
+
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when sibling case classes use the same argument name" in {
+        val code =
+          """
+            |final case class A(value: String)
+            |final case class B(value: String)
+            |final case class C(value: Int)
+            |""".stripMargin
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when the same variable is used in two sibling for loops (#342)" in {
+        val code =
+          """
+            |object Test {
+            |  for (i <- 1 to 10) println(i.toString)
+            |  for (i <- 1 to 10) println(i.toString)
+            |}
+            |""".stripMargin
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "when using for-comprehension (#343)" in {
+        val code =
+          """
+            |object Test {
+            |  for {
+            |    c <- "Hello, world!"
+            |    if c != ','
+            |  } println(c)
+            |}
+            |""".stripMargin
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings.size shouldBe 0
       }

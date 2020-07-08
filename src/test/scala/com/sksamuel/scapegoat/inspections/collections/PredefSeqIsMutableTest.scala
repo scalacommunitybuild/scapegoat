@@ -1,17 +1,15 @@
 package com.sksamuel.scapegoat.inspections.collections
 
-import com.sksamuel.scapegoat.{ PluginRunner, isScala213 }
-
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.{isScala213, InspectionTest}
 
 /** @author Stephen Samuel */
-class PredefSeqIsMutableTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class PredefSeqIsMutableTest extends InspectionTest {
 
   override val inspections = Seq(new PredefSeqIsMutable)
 
   "PredefSeqUse" - {
     "should report warning (for Scala < 2.13)" - {
-      "for predef seq apply" in  {
+      "for predef seq apply" in {
         val code = """object Test { val a = Seq("sammy") }""".stripMargin
         val expectedWarnings = if (isScala213) 0 else 1
         compileCodeSnippet(code)

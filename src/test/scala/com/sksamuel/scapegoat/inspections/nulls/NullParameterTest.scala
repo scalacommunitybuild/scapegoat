@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.nulls
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class NullParameterTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class NullParameterTest extends InspectionTest {
 
   override val inspections = Seq(new NullParameter)
 
@@ -25,7 +24,7 @@ class NullParameterTest extends FreeSpec with Matchers with PluginRunner with On
 
       compileCodeSnippet(code)
       compiler.scapegoat.feedback.warnings.size shouldBe 1
-      compiler.scapegoat.feedback.warnings.forall(_.snippet.get.contains("method argument"))
+      compiler.scapegoat.feedback.warnings.forall(_.snippet.get.contains("println(null)"))
     }
     "should not report warning" - {
       "for override val in case class" in {

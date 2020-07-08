@@ -1,10 +1,9 @@
 package com.sksamuel.scapegoat.inspections.option
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class OptionGetTest extends FreeSpec with Matchers with PluginRunner {
+class OptionGetTest extends InspectionTest {
 
   override val inspections = Seq(new OptionGet)
 

@@ -1,22 +1,21 @@
 package com.sksamuel.scapegoat.inspections.empty
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ OneInstancePerTest, FreeSpec, Matchers }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class EmptyMethodTest extends FreeSpec with Matchers with PluginRunner with OneInstancePerTest {
+class EmptyMethodTest extends InspectionTest {
 
   override val inspections = Seq(new EmptyMethod)
 
   "empty method" - {
     "should report warning" in {
       val code = """object Test {
-                      def foo = { }
-                      def foo2 = true
-                      def foo3 = {
+                      private def foo = { }
+                      private def foo2 = true
+                      private def foo3 = {
                         ()
                       }
-                      def foo4 = {
+                      private def foo4 = {
                         println("sammy")
                         ()
                       }
@@ -28,6 +27,26 @@ class EmptyMethodTest extends FreeSpec with Matchers with PluginRunner with OneI
     "should not report warning" - {
       "for empty trait methods" in {
         val code = """trait A { def foo = () } """
+        compileCodeSnippet(code)
+        compiler.scapegoat.feedback.warnings.size shouldBe 0
+      }
+
+      "for empty methods in public classes" in {
+        val code =
+          """
+            |class Animal {
+            |  def makeSound(): Unit = {}
+            |}
+            |
+            |class Dog extends Animal {
+            |  override def makeSound(): Unit = {
+            |    println("Bark")
+            |  }
+            |}
+            |
+            |class Fish extends Animal {}
+            |""".stripMargin
+
         compileCodeSnippet(code)
         compiler.scapegoat.feedback.warnings.size shouldBe 0
       }

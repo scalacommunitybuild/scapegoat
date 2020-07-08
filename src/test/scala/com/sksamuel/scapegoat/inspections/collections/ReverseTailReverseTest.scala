@@ -1,13 +1,7 @@
 package com.sksamuel.scapegoat.inspections.collections
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class ReverseTailReverseTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class ReverseTailReverseTest extends InspectionTest {
 
   override val inspections = Seq(new ReverseTailReverse)
 

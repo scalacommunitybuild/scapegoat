@@ -1,13 +1,7 @@
 package com.sksamuel.scapegoat.inspections.matching
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
-
-class SuspiciousMatchOnClassObjectTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+import com.sksamuel.scapegoat.InspectionTest
+class SuspiciousMatchOnClassObjectTest extends InspectionTest {
 
   override val inspections = Seq(new SuspiciousMatchOnClassObject)
 

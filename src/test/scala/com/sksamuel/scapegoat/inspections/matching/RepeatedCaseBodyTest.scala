@@ -1,14 +1,9 @@
 package com.sksamuel.scapegoat.inspections.matching
 
-import com.sksamuel.scapegoat.PluginRunner
-import org.scalatest.{ FreeSpec, Matchers, OneInstancePerTest }
+import com.sksamuel.scapegoat.InspectionTest
 
 /** @author Stephen Samuel */
-class RepeatedCaseBodyTest
-    extends FreeSpec
-    with Matchers
-    with PluginRunner
-    with OneInstancePerTest {
+class RepeatedCaseBodyTest extends InspectionTest {
 
   override val inspections = Seq(new RepeatedCaseBody)
 
@@ -16,7 +11,8 @@ class RepeatedCaseBodyTest
     "should report warning" - {
       "for repeated no-guard cases" in {
 
-        val code = """object Test {
+        val code =
+          """object Test {
                       val s : Any = null
                       s match {
                        case "sam" => println("foo"); println("foo"); println("foo"); println("foo"); println("foo")
@@ -30,7 +26,8 @@ class RepeatedCaseBodyTest
       }
       "for repeated no-guard cases with ignored guard cases" in {
 
-        val code = """object Test {
+        val code =
+          """object Test {
                       val s : Any = null
                       s match {
                        case str : String if str.length == 3 => println("foo"); println("foo"); println("foo"); println("foo"); println("foo")
