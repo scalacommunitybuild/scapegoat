@@ -5,7 +5,8 @@ import scala.reflect.internal.Flags
 import com.sksamuel.scapegoat._
 
 /**
- * @author Stephen Samuel */
+ * @author Stephen Samuel
+ */
 class UnusedMethodParameter
     extends Inspection(
       text = "Unused parameter",

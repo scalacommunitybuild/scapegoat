@@ -3,7 +3,8 @@ package com.sksamuel.scapegoat.inspections.math
 import com.sksamuel.scapegoat._
 
 /**
- * @author Matic Potočnik */
+ * @author Matic Potočnik
+ */
 class UseCbrt
     extends Inspection(
       text = "Use cbrt",
